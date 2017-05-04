@@ -8,7 +8,7 @@ defmodule Terminal do
   def init(output_pid) do
     {:ok, shell, _} = :exec.run('$SHELL', [:stdin, :stdout, :stderr, :pty])
 
-    :exec.send(shell, "stty echo\r")
+#:exec.send(shell, "stty echo\r")
 
     {:ok, %{
       output_pid: output_pid,
@@ -21,14 +21,16 @@ defmodule Terminal do
   end
 
   def handle_cast({:input, input}, %{shell: shell} = state) do
-    IO.puts "Input #{input}"
-    IO.puts Process.alive?(shell)
     :exec.send(shell, input)
     {:noreply, state}
   end
 
   def handle_info({:stdout, _ref, output}, %{output_pid: output_pid} = state) do
-    IO.puts "output #{output}"
+    send(output_pid, {:output, output})
+    {:noreply, state}
+  end
+
+  def handle_info({:stderr, _rer, output}, %{output_pid: output_pid} = state) do
     send(output_pid, {:output, output})
     {:noreply, state}
   end
