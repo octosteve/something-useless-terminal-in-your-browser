@@ -3,6 +3,7 @@ defmodule TerminalInYourBrowser.Web.UserSocket do
 
   ## Channels
   # channel "room:*", TerminalInYourBrowser.Web.RoomChannel
+  channel "terminal:*", TerminalInYourBrowser.Web.TerminalChannel
 
   ## Transports
   transport :websocket, Phoenix.Transports.WebSocket
